@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Projeção de Vendas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f9f9f9;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    input {
+      padding: 6px;
+      margin: 6px 0;
+      width: 220px;
+    }
+    button {
+      padding: 6px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 30px;
+      width: 100%;
+      max-width: 600px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+    }
+    td button {
+      padding: 4px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Projeção de Vendas</h1>
+
+  <h2>Adicionar Nova Projeção</h2>
+  <input type="date" id="novaData">
+  <input type="number" id="novoValor" placeholder="Digite o valor">
+  <br>
+  <button onclick="adicionar()">Adicionar</button>
+
+  <h2>Editar Valor Existente</h2>
+  <input type="date" id="dataEditar">
+  <input type="number" id="novoValorEditar" placeholder="Novo valor">
+  <br>
+  <button onclick="editar()">Editar</button>
+
+  <h2>Projeções Atuais</h2>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Valor</th><th>Ações</th></tr>
+    </thead>
+    <tbody id="tabela">
+      {% for item in dados %}
+        <tr>
+          <td>{{ item.Data }}</td>
+          <td>{{ item.Valor }}</td>
+          <td>
+            <button onclick="excluir('{{ item.Data }}')">Excluir</button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    async function adicionar() {
+      const data = document.getElementById("novaData").value;
+      const valor = document.getElementById("novoValor").value;
+      await fetch('/adicionar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data, valor })
+      });
+      location.reload();
+    }
+
+    async function editar() {
+      const data = document.getElementById("dataEditar").value;
+      const valor = document.getElementById("novoValorEditar").value;
+      await fetch('/editar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data, valor })
+      });
+      location.reload();
+    }
+
+    async function excluir(data) {
+      await fetch('/excluir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data })
+      });
+      location.reload();
+    }
+  </script>
+</body>
+</html>
