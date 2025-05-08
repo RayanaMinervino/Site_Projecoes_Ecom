@@ -14,8 +14,8 @@ def conectar():
         'PWD=Novasenha123@;'
         'Encrypt=yes;'
         'TrustServerCertificate=yes;'
+        'Connection Timeout=30;'
     )
-
 
 @app.route('/')
 def index():
