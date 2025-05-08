@@ -7,12 +7,15 @@ app = Flask(__name__)
 # Conexão com o banco de dados
 def conectar():
     return pyodbc.connect(
-        'DRIVER={SQL Server};'
+        'DRIVER={ODBC Driver 18 for SQL Server};'
         'SERVER=servidorprojecaoecom.database.windows.net;'
         'DATABASE=projecao_db;'
         'UID=rayaanminervinoecom;'
         'PWD=Novasenha123@;'
+        'Encrypt=yes;'
+        'TrustServerCertificate=yes;'
     )
+
 
 @app.route('/')
 def index():
