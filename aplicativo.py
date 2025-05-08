@@ -1,17 +1,25 @@
 from flask import Flask, render_template, request, jsonify
 import pyodbc
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
 # Conexão com o banco de dados
 def conectar():
+    # Usa o driver certo dependendo se está no Render ou local
+    driver_local = 'SQL Server'
+    driver_render = 'ODBC Driver 18 for SQL Server'
+    driver = driver_render if os.getenv("RENDER") == "true" else driver_local
+
     return pyodbc.connect(
-        'DRIVER={SQL Server};'
+        f'DRIVER={{{driver}}};'
         'SERVER=servidorprojecaoecom.database.windows.net;'
         'DATABASE=projecao_db;'
         'UID=rayaanminervinoecom;'
         'PWD=Novasenha123@;'
+        'Encrypt=yes;'
+        'TrustServerCertificate=yes;'
     )
 
 @app.route('/')
