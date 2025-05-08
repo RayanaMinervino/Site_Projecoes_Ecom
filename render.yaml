@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: Site_Projecoes_Ecom
+    env: python
+    buildCommand: bash render-build.sh && pip install -r requirements.txt
+    startCommand: gunicorn aplicativo:app
+    envVars:
+      - key: PORT
+        value: 10000
