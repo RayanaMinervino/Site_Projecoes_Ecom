@@ -1,34 +1,26 @@
 from flask import Flask, render_template, request, jsonify
 import pyodbc
 from datetime import datetime
-import os
-
+ 
 app = Flask(__name__)
-
+ 
 # Conexão com o banco de dados
 def conectar():
-    # Usa o driver certo dependendo se está no Render ou local
-    driver_local = 'SQL Server'
-    driver_render = 'ODBC Driver 18 for SQL Server'
-    driver = driver_render if os.getenv("RENDER") == "true" else driver_local
-
     return pyodbc.connect(
-        f'DRIVER={{{driver}}};'
+        'DRIVER={SQL Server};'
         'SERVER=servidorprojecaoecom.database.windows.net;'
         'DATABASE=projecao_db;'
         'UID=rayaanminervinoecom;'
         'PWD=Novasenha123@;'
-        'Encrypt=yes;'
-        'TrustServerCertificate=yes;'
     )
-
+ 
 @app.route('/')
 def index():
     filtro_data = request.args.get("filtro_data")
     filtro_mes = request.args.get("filtro_mes")
     conn = conectar()
     cursor = conn.cursor()
-
+ 
     if filtro_data:
         cursor.execute("SELECT Data, Valor FROM ProjecaoVendas WHERE CAST(Data AS DATE) = ?", filtro_data)
     elif filtro_mes:
@@ -39,7 +31,7 @@ def index():
         """, (int(filtro_mes[5:]), int(filtro_mes[:4])))
     else:
         cursor.execute("SELECT Data, Valor FROM ProjecaoVendas ORDER BY Data")
-
+ 
     dados = []
     for row in cursor.fetchall():
         data = row[0]
@@ -48,10 +40,10 @@ def index():
         else:
             data_formatada = data.strftime("%Y-%m-%d")
         dados.append({"Data": data_formatada, "Valor": row[1]})
-
+ 
     conn.close()
     return render_template("index.html", dados=dados)
-
+ 
 @app.route('/adicionar', methods=['POST'])
 def adicionar():
     data = request.json['data']
@@ -62,7 +54,7 @@ def adicionar():
     conn.commit()
     conn.close()
     return jsonify({'status': 'sucesso'})
-
+ 
 @app.route('/editar', methods=['POST'])
 def editar():
     data = request.json['data']
@@ -73,7 +65,7 @@ def editar():
     conn.commit()
     conn.close()
     return jsonify({'status': 'sucesso'})
-
+ 
 @app.route('/excluir', methods=['POST'])
 def excluir():
     data = request.json['data']
@@ -83,6 +75,6 @@ def excluir():
     conn.commit()
     conn.close()
     return jsonify({'status': 'sucesso'})
-
+ 
 if __name__ == '__main__':
     app.run(debug=True)
